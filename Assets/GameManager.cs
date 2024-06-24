@@ -1,55 +1,133 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject menuPanel;  // Reference to the menu UI Panel
-    public GameObject gamePanel;  // Reference to the game UI Panel
-    public Button playButton;     // Reference to the Play button
+    public static GameManager instance;
 
-    public static bool gameStarted = false;  // Static variable to indicate if the game has started
+    public GameObject startMenuPanel;
+    public GameObject pauseMenuPanel;
+    public GameObject gameUIPanel;
+    public GameObject playerCamera; // Reference to the player camera or camera controller
 
-    void Start()
+    private enum GameState { MainMenu, Playing, Paused, Back, PlayAgain }
+    private GameState currentGameState;
+
+    private void Awake()
     {
-        // Show the menu UI and hide the game UI at the start
-        menuPanel.SetActive(true);
-        gamePanel.SetActive(false);
-
-        // Add listener to the Play button
-        playButton.onClick.AddListener(StartGame);
-
-        // Ensure the game is not running at start
-        gameStarted = false;
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    void Update()
+    private void Start()
     {
-        if (gameStarted)
+        SetGameState(GameState.MainMenu);
+    }
+
+    private void Update()
+    {
+        if (currentGameState == GameState.Playing && Input.GetKeyDown(KeyCode.Escape))
         {
-            // Game logic goes here
+            TogglePause();
         }
     }
 
     public void StartGame()
     {
-        gameStarted = true;
-
-        // Hide the menu UI and show the game UI
-        menuPanel.SetActive(false);
-        gamePanel.SetActive(true);
-
-        // Initialize game components
-        InitializeGame();
+        SetGameState(GameState.Playing);
     }
 
-    void InitializeGame()
+    public void TogglePause()
     {
-        // Put your game initialization logic here
-        Debug.Log("Game Started");
+        if (currentGameState == GameState.Playing)
+        {
+            SetGameState(GameState.Paused);
+        }
+        else if (currentGameState == GameState.Paused)
+        {
+            SetGameState(GameState.Playing);
+        }
+    }
+    public void PlayAgain()
+    {
+        SetGameState(GameState.PlayAgain);
+    }
+
+    public void BackToMenu()
+    {
+        SetGameState(GameState.Back);
+    }
+
+    private void SetGameState(GameState newState)
+    {
+        currentGameState = newState;
+
+        switch (newState)
+        {
+            case GameState.MainMenu:
+                Time.timeScale = 0f;
+                startMenuPanel.SetActive(true);
+                pauseMenuPanel.SetActive(false);
+                gameUIPanel.SetActive(false);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                playerCamera.GetComponent<CameraController>().enabled = false; // Disable camera control
+                break;
+            case GameState.Playing:
+                Time.timeScale = 1f;
+                startMenuPanel.SetActive(false);
+                pauseMenuPanel.SetActive(false);
+                gameUIPanel.SetActive(true);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                playerCamera.GetComponent<CameraController>().enabled = true; // Enable camera control
+                break;
+            case GameState.Paused:
+                Time.timeScale = 0f;
+                startMenuPanel.SetActive(false);
+                pauseMenuPanel.SetActive(true);
+                gameUIPanel.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                playerCamera.GetComponent<CameraController>().enabled = false; // Disable camera control
+                break;
+            case GameState.PlayAgain:
+                Time.timeScale = 1f;
+                startMenuPanel.SetActive(false);
+                pauseMenuPanel.SetActive(false);
+                gameUIPanel.SetActive(true);
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                playerCamera.GetComponent<CameraController>().enabled = true; // Enable camera control
+                break;
+            case GameState.Back:
+                Time.timeScale = 0f;
+                startMenuPanel.SetActive(true);
+                pauseMenuPanel.SetActive(false);
+                gameUIPanel.SetActive(false);
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                playerCamera.GetComponent<CameraController>().enabled = false; // Disable camera control
+                break;
+
+        }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
+
+
 
 
 
