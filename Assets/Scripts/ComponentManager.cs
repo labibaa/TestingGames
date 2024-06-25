@@ -11,11 +11,6 @@ public class ComponentManager : MonoBehaviour
     public Sprite collectedSprite; // Sprite to show when a component is collected
     private int collectedCount = 0;
 
-    public GameObject startMenuPanel;
-    public GameObject pauseMenuPanel;
-    public GameObject gameUIPanel; 
-    public GameObject winningPanel;
-
     private void Awake()
     {
         if (instance == null)
@@ -37,15 +32,13 @@ public class ComponentManager : MonoBehaviour
         if (collectedCount == componentImages.Length)
         {
             // All components collected
-            Time.timeScale = 0f;
-            winningPanel.SetActive(true);
-            startMenuPanel.SetActive(false);
-            pauseMenuPanel.SetActive(false);
-            gameUIPanel.SetActive(false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            GameWon();
             Debug.Log("All components collected!");
         }
+    }
+    public void GameWon()
+    {
+
     }
 }
 
