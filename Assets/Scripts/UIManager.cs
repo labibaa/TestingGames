@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -8,8 +10,9 @@ public class UIManager : MonoBehaviour
     public GameObject pausePanel;
     public GameObject winningPanel;
     public GameObject gameUIPanel;
+    public GameObject instructionPanel;
+    public GameObject gameWonPanel;
 
-    public GameObject[] quest;
     public static UIManager instance;
     private void Awake()
     {
@@ -51,6 +54,7 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 0f;
         pausePanel.SetActive(true);
+        gameUIPanel.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -58,8 +62,28 @@ public class UIManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         pausePanel.SetActive(false);
+        gameUIPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+    public void PlayAgain()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+    public void Instructions()
+    {
+        instructionPanel.SetActive(true);
+    }
 
+    public void GoBack()
+    {
+        instructionPanel.SetActive(false);
+
+    }
+    public void GameWon()
+    {
+        gameWonPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 }

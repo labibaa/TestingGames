@@ -32,13 +32,10 @@ public class ComponentManager : MonoBehaviour
         if (collectedCount == componentImages.Length)
         {
             // All components collected
-            GameWon();
+            UIManager.instance.GameWon();
             Debug.Log("All components collected!");
         }
     }
-    public void GameWon()
-    {
-
-    }
+  
 }
 
